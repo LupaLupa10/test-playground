@@ -1,0 +1,3081 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.4">
+    <Header>
+        <Application name="JPMML-SparkML library" version="3.3.1"/>
+        <Timestamp>2026-01-25T00:22:28Z</Timestamp>
+    </Header>
+    <DataDictionary>
+        <DataField name="merchant" optype="categorical" dataType="string">
+            <Value value="D-Market"/>
+            <Value value="B-Store"/>
+            <Value value="C-Shop"/>
+            <Value value="A-Mart"/>
+        </DataField>
+        <DataField name="channel" optype="categorical" dataType="string">
+            <Value value="pos"/>
+            <Value value="online"/>
+            <Value value="mobile"/>
+        </DataField>
+        <DataField name="amount" optype="continuous" dataType="double"/>
+        <DataField name="age" optype="continuous" dataType="double"/>
+        <DataField name="days" optype="continuous" dataType="double"/>
+        <DataField name="label" optype="categorical" dataType="integer">
+            <Value value="0"/>
+            <Value value="1"/>
+        </DataField>
+    </DataDictionary>
+    <MiningModel functionName="classification">
+        <MiningSchema>
+            <MiningField name="label" usageType="target"/>
+            <MiningField name="merchant" invalidValueTreatment="asValue" invalidValueReplacement="__unknown"/>
+            <MiningField name="channel" invalidValueTreatment="asValue" invalidValueReplacement="__unknown"/>
+            <MiningField name="amount" missingValueReplacement="81.17997890440618" missingValueTreatment="asMean"/>
+            <MiningField name="age" missingValueReplacement="48.669057773351476" missingValueTreatment="asMean"/>
+            <MiningField name="days" missingValueReplacement="182.8063891751333" missingValueTreatment="asMean"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="pmml(prediction)" optype="categorical" dataType="integer" isFinalResult="false"/>
+            <OutputField name="prediction" optype="continuous" dataType="double" feature="transformedValue">
+                <MapValues outputColumn="data:output" dataType="double">
+                    <FieldColumnPair field="pmml(prediction)" column="data:input"/>
+                    <InlineTable>
+                        <row>
+                            <data:input>0</data:input>
+                            <data:output>0</data:output>
+                        </row>
+                        <row>
+                            <data:input>1</data:input>
+                            <data:output>1</data:output>
+                        </row>
+                    </InlineTable>
+                </MapValues>
+            </OutputField>
+        </Output>
+        <Segmentation multipleModelMethod="modelChain" missingPredictionTreatment="returnMissing">
+            <Segment id="1">
+                <True/>
+                <MiningModel functionName="regression">
+                    <MiningSchema>
+                        <MiningField name="merchant"/>
+                        <MiningField name="channel"/>
+                        <MiningField name="amount"/>
+                        <MiningField name="age"/>
+                        <MiningField name="days"/>
+                    </MiningSchema>
+                    <Output>
+                        <OutputField name="gbtValue" optype="continuous" dataType="double" isFinalResult="false"/>
+                    </Output>
+                    <Segmentation multipleModelMethod="weightedSum" missingPredictionTreatment="returnMissing">
+                        <Segment id="1">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.7777777777777778">
+    <True/>
+    <Node score="-0.8407079646017699">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="0.07784431137724551">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.4782608695652174">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+                <Node score="-0.8765432098765432">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="35.274120383417895"/>
+                </Node>
+            </Node>
+            <Node score="0.7241379310344828">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.8994974874371859">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+            <Node score="-0.9919028340080972">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.5609756097560976">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.024193548387096774">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="117.43567665678347"/>
+        <Node score="0.782608695652174">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.9651162790697675">
+                <SimplePredicate field="days" operator="lessOrEqual" value="285.06701751932474"/>
+            </Node>
+        </Node>
+        <Node score="-0.5182481751824818">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="96.84579952618907"/>
+        </Node>
+    </Node>
+    <Node score="0.6513761467889908">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="1.0">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+        </Node>
+    </Node>
+    <Node score="0.9723502304147466">
+        <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="2" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.45691093063856614">
+    <True/>
+    <Node score="-0.483663025397307">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.5678937999522059">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            <Node score="0.8678971113991631">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+                <Node score="-0.4572999987558898">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.45548592903248347">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.07981368715640198">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.5190007369649424">
+                <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+            </Node>
+        </Node>
+        <Node score="-0.6965053102503715">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+        </Node>
+    </Node>
+    <Node score="0.4095103039298847">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.5008231056388593">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+            <Node score="1.8446250942101485">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+            </Node>
+        </Node>
+        <Node score="0.5815681975419323">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.192146652182029">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        <Node score="-0.5210232549820047">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        </Node>
+    </Node>
+    <Node score="-0.3123653535782152">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="3" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.4237391758535365">
+    <True/>
+    <Node score="-0.4365914646936541">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.4836607746091316">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            <Node score="0.7936965563798065">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+                <Node score="-0.4346474764309139">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.37338709630073996">
+                <SimplePredicate field="age" operator="lessOrEqual" value="29.411907942376303"/>
+            </Node>
+        </Node>
+        <Node score="-0.07585254771267248">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.49425204432566455">
+                <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+            </Node>
+        </Node>
+        <Node score="-0.6178485168569615">
+            <SimplePredicate field="age" operator="lessOrEqual" value="48.675098670541054"/>
+        </Node>
+    </Node>
+    <Node score="0.42234863220660324">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.4434707296825255">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            <Node score="1.4120680739776998">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+            </Node>
+        </Node>
+        <Node score="-0.02314460943044099">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+        </Node>
+    </Node>
+    <Node score="0.18357914469448255">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        <Node score="-0.48102712743762266">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        </Node>
+    </Node>
+    <Node score="-0.2900829503990047">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="4" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="-0.2982579260480237">
+    <True/>
+    <Node score="-0.5211685146797163">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="0.6366337581704248">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.7565266232276042">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.4137935716673065">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.40231660685257836">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+            </Node>
+        </Node>
+        <Node score="-0.44362386336732545">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.46282593400414646">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.2743655535222318">
+            <SimplePredicate field="age" operator="lessOrEqual" value="65.3470126059122"/>
+        </Node>
+    </Node>
+    <Node score="0.5343012272819372">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="0.028414430379671726">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.5456211162019199">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="88.68522302983408"/>
+            </Node>
+        </Node>
+        <Node score="1.14742612335259">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+        </Node>
+    </Node>
+    <Node score="0.02374755824112805">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.5111578071810391">
+            <SimplePredicate field="days" operator="lessOrEqual" value="319.7324114134099"/>
+        </Node>
+    </Node>
+    <Node score="0.34540881826278463">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="5" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.09563788321178002">
+    <True/>
+    <Node score="-0.39214229967002373">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.5053587407089185">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            <Node score="0.6597483069741523">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+                <Node score="-0.39454260130240776">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.4017023092605512">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.05291837344528219">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.4529122642515662">
+                <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+            </Node>
+        </Node>
+        <Node score="-0.5647164593052677">
+            <SimplePredicate field="age" operator="lessOrEqual" value="48.675098670541054"/>
+        </Node>
+    </Node>
+    <Node score="0.39097182646504997">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.4468448101977031">
+            <SimplePredicate field="days" operator="lessOrEqual" value="34.03145232239655"/>
+            <Node score="1.0543394235743697">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+            </Node>
+        </Node>
+        <Node score="-0.04054223068710113">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+        </Node>
+    </Node>
+    <Node score="-0.35629615216407057">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.2720512882155996">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.6426971209510435">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="6" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.08893732418716102">
+    <True/>
+    <Node score="-0.37229573518227227">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.43069899351743973">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            <Node score="0.6024129658849839">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+                <Node score="-0.3767251859302262">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.326749087703837">
+                <SimplePredicate field="age" operator="lessOrEqual" value="29.411907942376303"/>
+            </Node>
+        </Node>
+        <Node score="-0.05035671406204426">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.4328306099563743">
+                <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+            </Node>
+        </Node>
+        <Node score="-0.5360575754721408">
+            <SimplePredicate field="age" operator="lessOrEqual" value="48.675098670541054"/>
+        </Node>
+    </Node>
+    <Node score="0.5013879074216404">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.39162792583241995">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.04454779439924892">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+            </Node>
+        </Node>
+        <Node score="0.4053624209664067">
+            <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+        </Node>
+    </Node>
+    <Node score="-0.32978776415905625">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.2510632077727065">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.602593272734241">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="7" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="-0.2650457382736632">
+    <True/>
+    <Node score="-0.46978930305416755">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="0.1205877868336392">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="1.0457651534970458">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="0.036100136621607735">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                </Node>
+            </Node>
+            <Node score="-0.4186701957002684">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="64.86106494188152"/>
+            </Node>
+        </Node>
+        <Node score="-0.3937832759302549">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.4284974743983217">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.2322994481814605">
+            <SimplePredicate field="age" operator="lessOrEqual" value="65.3470126059122"/>
+        </Node>
+    </Node>
+    <Node score="0.4454859292867537">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="0.2025310116605311">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="1.278067324754105">
+                <SimplePredicate field="days" operator="lessOrEqual" value="23.738633538202006"/>
+            </Node>
+        </Node>
+        <Node score="1.024067812361409">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+        </Node>
+    </Node>
+    <Node score="-0.008493744192271394">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.4536663072648363">
+            <SimplePredicate field="days" operator="lessOrEqual" value="319.7324114134099"/>
+        </Node>
+    </Node>
+    <Node score="0.29686887133665935">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="8" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.08630436283090992">
+    <True/>
+    <Node score="-0.45437898105566077">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.14803695754984064">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.5251171527055057">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.37237239216832513">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.5917033872718815">
+                <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+            </Node>
+        </Node>
+        <Node score="0.09437302875293069">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.41333619367124097">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.3604826420096904">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.46870255242497194">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.3526302187447821">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.028244487856172798">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+            </Node>
+        </Node>
+        <Node score="0.37628098056277676">
+            <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+        </Node>
+    </Node>
+    <Node score="-0.3007025798488207">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.2146010647153693">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.5346131268975324">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="9" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="-0.24126662675661387">
+    <True/>
+    <Node score="-0.43814930480376424">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="-0.40453643012088963">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.9372692133674704">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="0.006621997766147166">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                </Node>
+            </Node>
+            <Node score="0.08825372881522311">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.36780589416754295">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.39735592814226256">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.21134291111885814">
+            <SimplePredicate field="age" operator="lessOrEqual" value="65.3470126059122"/>
+        </Node>
+    </Node>
+    <Node score="0.3991343480465973">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="0.036848304544375515">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.5197584601521632">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="88.68522302983408"/>
+            </Node>
+        </Node>
+        <Node score="0.9275891291365148">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+        </Node>
+    </Node>
+    <Node score="-0.49978602117065096">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.3793228631841729">
+            <SimplePredicate field="age" operator="lessOrEqual" value="75.53259461820377"/>
+        </Node>
+    </Node>
+    <Node score="0.271355231853935">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="10" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.28387015821564143">
+    <True/>
+    <Node score="-0.4261762546999952">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.12131366021917259">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.4591254753685925">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.36666472879006995">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.5361404702665059">
+                <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+            </Node>
+        </Node>
+        <Node score="0.1010683632377764">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.38505964049400815">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.3366588506349286">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.3905730055892728">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="-0.06233104758377023">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.3097326182452353">
+                <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+            </Node>
+        </Node>
+        <Node score="0.3081214179695963">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="-0.2756236064080875">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.18337280848491613">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="-0.11978566433289389">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="11" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.3784805198318717">
+    <True/>
+    <Node score="-0.4102199107583547">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.4146334486892212">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.6272248128911295">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.10964498992411277">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+                </Node>
+            </Node>
+            <Node score="0.004211972518380882">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="0.09664129787019439">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.3718740739221578">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.3256450047596446">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.3770502413963557">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="-0.05850112367672355">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.2932630273897987">
+                <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+            </Node>
+        </Node>
+        <Node score="0.2978911322670464">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="-0.19118719273081622">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="0.2490366526161322">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="-0.0038708233474676586">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="12" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.07529008057694254">
+    <True/>
+    <Node score="-0.39536304739464423">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.09462533486550055">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.3915266869839011">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.3462114019994847">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.48366777175213627">
+                <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+            </Node>
+        </Node>
+        <Node score="0.09237676663372435">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.3595259205892846">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.31527763457005">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.3444714839713825">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.201134877150904">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            <Node score="0.5740225873409317">
+                <SimplePredicate field="days" operator="lessOrEqual" value="34.03145232239655"/>
+            </Node>
+        </Node>
+        <Node score="0.3904283193378248">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="117.43567665678347"/>
+        </Node>
+    </Node>
+    <Node score="-0.2548543234742261">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.18398614187141057">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.4450643276928888">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="13" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="-0.20967813488267575">
+    <True/>
+    <Node score="-0.47542907892176955">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="-0.2943374734742833">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+            <Node score="0.4019153525998819">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                <Node score="-0.43034789045367716">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="-0.11193934292657397">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="0.469184860057762">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.48472645933624325">
+                <SimplePredicate field="days" operator="lessOrEqual" value="78.13656074246703"/>
+            </Node>
+        </Node>
+        <Node score="-0.17885338383294716">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+        </Node>
+    </Node>
+    <Node score="0.34665696770386445">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="-1.5630084000865314">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+            <Node score="0.30513563016483136">
+                <SimplePredicate field="channel" operator="equal" value="pos"/>
+            </Node>
+        </Node>
+        <Node score="0.714484049077151">
+            <SimplePredicate field="days" operator="lessOrEqual" value="23.738633538202006"/>
+        </Node>
+    </Node>
+    <Node score="-0.07326183937748197">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.36979444643464987">
+            <SimplePredicate field="days" operator="lessOrEqual" value="319.7324114134099"/>
+        </Node>
+    </Node>
+    <Node score="0.22621213091916662">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="14" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.23123865396037444">
+    <True/>
+    <Node score="-0.26226073466547567">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="-0.285229309441042">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+            <Node score="0.38170752467383245">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                <Node score="-0.4136343371907373">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="-0.10527753100723135">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="0.3598768591102075">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.009359427375987783">
+                <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+            </Node>
+        </Node>
+        <Node score="0.041769946014742765">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.41997960893296826">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="1.2724668301306663">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            <Node score="0.2859606093659348">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="0.17900930457839348">
+            <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+        </Node>
+    </Node>
+    <Node score="0.33643388513698075">
+        <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+        <Node score="0.7969244096263809">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="-0.08816975195183537">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="15" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.2850128882502128">
+    <True/>
+    <Node score="-0.366546355599169">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.36008287465906325">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.7227344951341678">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.031791287748267845">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                </Node>
+            </Node>
+            <Node score="0.0190423452252535">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="0.09818769090146198">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.3299732606616151">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.28631362479974687">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.3399031046829022">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.10026597359804558">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.3774290464579418">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="0.26203919811244053">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="0.023738723250241407">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="-0.33521479042080643">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="-0.45233868422228496">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="16" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="-0.18925164268383649">
+    <True/>
+    <Node score="-0.36948068909924847">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="0.49443882206944173">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.09853759272097198">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.5265105183279419">
+                    <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                </Node>
+            </Node>
+            <Node score="-0.31105836799315195">
+                <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+            </Node>
+        </Node>
+        <Node score="-0.2988172946416022">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.31869088712992893">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.15264391837916896">
+            <SimplePredicate field="age" operator="lessOrEqual" value="65.3470126059122"/>
+        </Node>
+    </Node>
+    <Node score="0.30779983926396476">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="-1.5188220741808036">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+            <Node score="0.2715198894388862">
+                <SimplePredicate field="channel" operator="equal" value="pos"/>
+            </Node>
+        </Node>
+        <Node score="0.6499052635310184">
+            <SimplePredicate field="days" operator="lessOrEqual" value="23.738633538202006"/>
+        </Node>
+    </Node>
+    <Node score="0.18648616381386576">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.5314395747464172">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="0.20358793560594893">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="17" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.11176333634541727">
+    <True/>
+    <Node score="-0.8859788077477785">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="-0.26035829654260445">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+            <Node score="0.40047892841726757">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                <Node score="-0.37182454377230045">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="-0.0927308851414483">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="0.3121767456199057">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.004982592628879752">
+                <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+            </Node>
+        </Node>
+        <Node score="-0.1364259174002473">
+            <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+        </Node>
+    </Node>
+    <Node score="0.3815691847347233">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="1.1333283857592746">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            <Node score="0.263104257219275">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="0.15326522330569808">
+            <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+        </Node>
+    </Node>
+    <Node score="0.31340208646426726">
+        <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+        <Node score="0.7480602579546959">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="-0.3952295740874199">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="18" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="-0.17717299359827526">
+    <True/>
+    <Node score="-0.422899525054225">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="0.4937003086158354">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.9899122691724239">
+                <SimplePredicate field="days" operator="lessOrEqual" value="242.46188546412614"/>
+                <Node score="-0.22967274707082164">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="-0.2331457871718635">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="40.576244396343135"/>
+            </Node>
+        </Node>
+        <Node score="-0.28319939291625507">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.3021227506913912">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.15486917761008956">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+        </Node>
+    </Node>
+    <Node score="0.2528488431768877">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="-1.4586587239968445">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+            <Node score="0.2515065482009618">
+                <SimplePredicate field="channel" operator="equal" value="pos"/>
+            </Node>
+        </Node>
+        <Node score="0.4198924914484073">
+            <SimplePredicate field="age" operator="lessOrEqual" value="37.634747393903595"/>
+        </Node>
+    </Node>
+    <Node score="0.21179830009537354">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.7072712657144576">
+            <SimplePredicate field="age" operator="lessOrEqual" value="24.09727183437848"/>
+        </Node>
+    </Node>
+    <Node score="0.19124222335476718">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="19" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.27362526862469116">
+    <True/>
+    <Node score="-0.8314431767374055">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="-0.24615068866597414">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+            <Node score="0.3584762986980792">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                <Node score="-0.3530585919036621">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="-0.08205631289766234">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="0.09750130297786914">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.4862656119142884">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            </Node>
+        </Node>
+        <Node score="-0.12675004244243115">
+            <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+        </Node>
+    </Node>
+    <Node score="-0.030905644915270286">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.2565508322784206">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="0.8393188426592431">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            </Node>
+        </Node>
+        <Node score="0.3655248579928786">
+            <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+        </Node>
+    </Node>
+    <Node score="0.3618586697830891">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        <Node score="-3.4500452803268207">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="0.481898189672892">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="20" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.31899441421930513">
+    <True/>
+    <Node score="-0.3337038086073442">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.06536212309000779">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.3580062167878302">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.3096033154880657">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.3958557420802261">
+                <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+            </Node>
+        </Node>
+        <Node score="0.12193643927095645">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.28976323690553685">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.24916706276703038">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="-0.13661695539423704">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="0.2266637473140633">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.08230742835305493">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+            </Node>
+        </Node>
+        <Node score="0.1603851173311099">
+            <SimplePredicate field="age" operator="lessOrEqual" value="33.6526357986066"/>
+        </Node>
+    </Node>
+    <Node score="0.07065512474530705">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        <Node score="-1.8002788800825191">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="0.1067278438430935">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="21" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.10371321090907197">
+    <True/>
+    <Node score="-0.3236394691689855">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="1.5906686562905363">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.12408812056593391">
+                <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                <Node score="-0.4274494785858924">
+                    <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                </Node>
+            </Node>
+            <Node score="0.04573550630579443">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="68.54894694826106"/>
+            </Node>
+        </Node>
+        <Node score="0.11678447978384489">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.28207464794871395">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.24280061502153885">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.2940627114956805">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        <Node score="0.5059244893301275">
+            <SimplePredicate field="channel" operator="equal" value="mobile"/>
+            <Node score="-0.4733754263644342">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="156.78702025360727"/>
+            </Node>
+        </Node>
+        <Node score="-0.246234694033597">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+        </Node>
+    </Node>
+    <Node score="0.24057472228001658">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        <Node score="-0.16318359855450076">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        </Node>
+    </Node>
+    <Node score="0.2899601432196746">
+        <SimplePredicate field="age" operator="lessOrEqual" value="61.696041203336435"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="22" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.28209262979525934">
+    <True/>
+    <Node score="-0.3141438034976813">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.2965955114495158">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.333736340634302">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.29460146596282555">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="0.03897019066054346">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="0.111805407431474">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.2747714768752948">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.23672721561016916">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.29451555584141337">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="-0.16632760731180685">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.19521188467342745">
+                <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+            </Node>
+        </Node>
+        <Node score="0.21810856415318502">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="0.010447782693928622">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="-0.2639193914097631">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="-0.0341634843289164">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="23" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.2730893457073426">
+    <True/>
+    <Node score="-0.24411968291072406">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="0.44486569877708687">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.07491657236092916">
+                <SimplePredicate field="days" operator="lessOrEqual" value="242.46188546412614"/>
+                <Node score="-0.2893829643108839">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                </Node>
+            </Node>
+            <Node score="-0.21208847575773504">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="40.576244396343135"/>
+            </Node>
+        </Node>
+        <Node score="0.09603426920243355">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+            <Node score="-0.2182389262381163">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+            </Node>
+        </Node>
+        <Node score="-0.8106117919643038">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.2336939604966684">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="-1.4444174590372618">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+            <Node score="0.19442490130841994">
+                <SimplePredicate field="channel" operator="equal" value="pos"/>
+            </Node>
+        </Node>
+        <Node score="0.44419113217482675">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="88.68522302983408"/>
+        </Node>
+    </Node>
+    <Node score="-0.12249587504028972">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.2856927502826214">
+            <SimplePredicate field="days" operator="lessOrEqual" value="319.7324114134099"/>
+        </Node>
+    </Node>
+    <Node score="-0.118424008542273">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="24" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.2385662542814243">
+    <True/>
+    <Node score="-1.1748485572666822">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.26235609715799946">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.05868020688405371">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.2736076660941241">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="242.46188546412614"/>
+                </Node>
+            </Node>
+            <Node score="-0.02243706416550945">
+                <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+            </Node>
+        </Node>
+        <Node score="-0.10318755168519159">
+            <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+            <Node score="-0.2343189546284445">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.32811429558837396">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        </Node>
+    </Node>
+    <Node score="-0.029397301892853438">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.21650516359258035">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="0.7612927272958897">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            </Node>
+        </Node>
+        <Node score="0.32814985964989">
+            <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+        </Node>
+    </Node>
+    <Node score="0.329429735818587">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        <Node score="-3.202911587177761">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="0.418497474528125">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="25" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="-0.1475323411190294">
+    <True/>
+    <Node score="-0.30649883963807606">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+        <Node score="0.29827669012330044">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.06741886383702712">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+                <Node score="-0.653647072112128">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="184.03417998220397"/>
+                </Node>
+            </Node>
+            <Node score="-0.09993382227205608">
+                <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+            </Node>
+        </Node>
+        <Node score="-0.24084823869595062">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.25436837745726476">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.10382712408056456">
+            <SimplePredicate field="age" operator="lessOrEqual" value="65.3470126059122"/>
+        </Node>
+    </Node>
+    <Node score="0.5224429011678806">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="-1.3842630573942072">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+            <Node score="0.17711524826364022">
+                <SimplePredicate field="channel" operator="equal" value="pos"/>
+            </Node>
+        </Node>
+        <Node score="0.22756133717752525">
+            <SimplePredicate field="days" operator="lessOrEqual" value="341.06623298636543"/>
+        </Node>
+    </Node>
+    <Node score="0.12355072189925474">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.44939929423825503">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="0.16570772960042235">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="26" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.22942796544862493">
+    <True/>
+    <Node score="-1.5706447210833143">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.24678721587491625">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.05537318878450081">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.41217293269440997">
+                    <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                </Node>
+            </Node>
+            <Node score="-0.021715354491021542">
+                <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+            </Node>
+        </Node>
+        <Node score="-0.09710265976896151">
+            <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+            <Node score="-0.22371779253338203">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.391405693055729">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="96.84579952618907"/>
+        </Node>
+    </Node>
+    <Node score="-0.05014958466548214">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.2729486628108418">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.12290092731646401">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            </Node>
+        </Node>
+        <Node score="0.2719217505239691">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.3143246454254334">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        <Node score="-2.9675526583291707">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="0.4072231544437824">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="27" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.2563555036753106">
+    <True/>
+    <Node score="-0.22137147126508794">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.23323453208891964">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.05226785629885183">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.3926954511700754">
+                    <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                </Node>
+            </Node>
+            <Node score="-0.020477794328860228">
+                <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+            </Node>
+        </Node>
+        <Node score="0.06764324169470416">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.2458123265764013">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="0.015040312698306395">
+            <SimplePredicate field="days" operator="lessOrEqual" value="45.23957569436428"/>
+        </Node>
+    </Node>
+    <Node score="-0.04622764808463896">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.2661031740246503">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.11947310149166436">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            </Node>
+        </Node>
+        <Node score="0.25773325510397493">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.3444880141207094">
+        <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+        <Node score="0.23387315612965123">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="-0.28460545821151184">
+        <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="28" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.21665790796106052">
+    <True/>
+    <Node score="-0.0768776213813248">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="-0.2917345380425234">
+            <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+            <Node score="-0.10287755221444658">
+                <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+                <Node score="-0.35113408767662235">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+                </Node>
+            </Node>
+            <Node score="-1.1092661221177276">
+                <SimplePredicate field="days" operator="lessOrEqual" value="309.0027324356204"/>
+            </Node>
+        </Node>
+        <Node score="0.1631074421680924">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.2187917490846399">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            </Node>
+        </Node>
+        <Node score="-0.22175236102911852">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+        </Node>
+    </Node>
+    <Node score="0.05567522978030265">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.23536802323058773">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.060055141363776376">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="96.84579952618907"/>
+            </Node>
+        </Node>
+        <Node score="-0.21549215514623446">
+            <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        </Node>
+    </Node>
+    <Node score="0.29965083245309193">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        <Node score="-2.746756553999668">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="0.38331830903965447">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="29" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+</MiningSchema>
+<Node score="0.2437567303697991">
+    <True/>
+    <Node score="-0.28090056818505377">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.03025006576284247">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.30995764346933885">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.27048144471282265">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.32207576036209773">
+                <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+            </Node>
+        </Node>
+        <Node score="0.1310624396811802">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.23524831519963826">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.20161267813357106">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.18811437495927705">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.18520918494191851">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+            <Node score="-1.5231334314465037">
+                <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+            </Node>
+        </Node>
+        <Node score="0.6138080008124575">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+        </Node>
+    </Node>
+    <Node score="-0.11444825006511902">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="0.15606481948791628">
+            <SimplePredicate field="age" operator="lessOrEqual" value="33.6526357986066"/>
+        </Node>
+    </Node>
+    <Node score="-0.04023023748667196">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="30" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.19557123113841599">
+    <True/>
+    <Node score="-0.2736538354357918">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="1.3605974623133008">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.7103957373494225">
+                <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                <Node score="-0.1743573382245598">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="0.03879850763389882">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="68.54894694826106"/>
+            </Node>
+        </Node>
+        <Node score="0.12561500365572772">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.23009544568870505">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.19728142079166475">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.2539810684473195">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="-0.1476909713276741">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.1732068173965123">
+                <SimplePredicate field="days" operator="lessOrEqual" value="274.0646284701893"/>
+            </Node>
+        </Node>
+        <Node score="0.1793472782143598">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="-0.10614944679155769">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="0.145288723091205">
+            <SimplePredicate field="age" operator="lessOrEqual" value="33.6526357986066"/>
+        </Node>
+    </Node>
+    <Node score="-0.3946421476652229">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="31" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+</MiningSchema>
+<Node score="0.22194520392372583">
+    <True/>
+    <Node score="-0.2667609396196913">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.02888057841729239">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.2939230920651807">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+                <Node score="-0.2568204110218729">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+                </Node>
+            </Node>
+            <Node score="-0.2983321489805199">
+                <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+            </Node>
+        </Node>
+        <Node score="0.12034272097899444">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.22515807692931478">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.19311745719189186">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.19023369247989133">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.4435260274816073">
+            <SimplePredicate field="age" operator="lessOrEqual" value="24.09727183437848"/>
+            <Node score="1.27266877237917">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="92.70452462862887"/>
+            </Node>
+        </Node>
+        <Node score="-1.0782500832658526">
+            <SimplePredicate field="age" operator="lessOrEqual" value="25.903860271909537"/>
+        </Node>
+    </Node>
+    <Node score="0.2384003616983088">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="0.05911914286923719">
+            <SimplePredicate field="channel" operator="equal" value="mobile"/>
+        </Node>
+    </Node>
+    <Node score="-0.10475074695904772">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="32" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.16003281736385974">
+    <True/>
+    <Node score="-0.1407505304898701">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="-0.20415861102139063">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+            <Node score="-1.2984693084356203">
+                <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+                <Node score="-0.27868647714183536">
+                    <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+                </Node>
+            </Node>
+            <Node score="-0.10609878101437469">
+                <SimplePredicate field="age" operator="lessOrEqual" value="50.27664490725446"/>
+            </Node>
+        </Node>
+        <Node score="0.19053720313862743">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.06502827053264347">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+            </Node>
+        </Node>
+        <Node score="0.18206584017030455">
+            <SimplePredicate field="days" operator="lessOrEqual" value="45.23957569436428"/>
+        </Node>
+    </Node>
+    <Node score="0.2249069174325853">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.2893820340248297">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+            <Node score="-0.30858463209421505">
+                <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+            </Node>
+        </Node>
+        <Node score="0.2656588576339833">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="117.43567665678347"/>
+        </Node>
+    </Node>
+    <Node score="0.3497348770798487">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="-0.012497114501546738">
+            <SimplePredicate field="age" operator="lessOrEqual" value="71.47010053059952"/>
+        </Node>
+    </Node>
+    <Node score="0.30364327724603274">
+        <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="33" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.22438963819983543">
+    <True/>
+    <Node score="-0.176172234754112">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="-0.06940713095782836">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="0.056595098501849433">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+                <Node score="-0.22622557138405486">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+                </Node>
+            </Node>
+            <Node score="1.9764843413651267">
+                <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+            </Node>
+        </Node>
+        <Node score="-0.1585509774168311">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            <Node score="0.1677193689808199">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="-0.30709560037753747">
+            <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+        </Node>
+    </Node>
+    <Node score="-0.06429838613341274">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.21402995464021304">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.0468667204537667">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="96.84579952618907"/>
+            </Node>
+        </Node>
+        <Node score="0.1672214189310365">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.30172140153278204">
+        <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+        <Node score="0.20617051440861545">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="-0.3039522881303434">
+        <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="34" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.2185188524404882">
+    <True/>
+    <Node score="-0.22837815004948403">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="0.2783670340992932">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.06940926410012037">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.21710940055442657">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="242.46188546412614"/>
+                </Node>
+            </Node>
+            <Node score="-0.29339262446845443">
+                <SimplePredicate field="days" operator="lessOrEqual" value="78.13656074246703"/>
+            </Node>
+        </Node>
+        <Node score="-0.20258691972411622">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.21385413006949552">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="-0.06482300959943593">
+            <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+        </Node>
+    </Node>
+    <Node score="-0.061586522385131195">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.21994312430247398">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.06619310700068748">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            </Node>
+        </Node>
+        <Node score="0.17185600963486933">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.2934575320310749">
+        <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+        <Node score="0.20218738145419662">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="-0.29518322334349206">
+        <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="35" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.21290582672755426">
+    <True/>
+    <Node score="-0.1583576687789378">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="0.14773385082355991">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.67988221620003">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+                <Node score="-0.11977700003911121">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+                </Node>
+            </Node>
+            <Node score="-0.18023344610009953">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            </Node>
+        </Node>
+        <Node score="-0.19872641411844905">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.20956819654451783">
+                <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            </Node>
+        </Node>
+        <Node score="0.010614640486285439">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="-0.06047552579788871">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.20452066180167902">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.04360848572213488">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="96.84579952618907"/>
+            </Node>
+        </Node>
+        <Node score="0.16030090282521112">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.28561931342250857">
+        <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+        <Node score="0.19835186494727194">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="-0.28645375092785824">
+        <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="36" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.19861567527047705">
+    <True/>
+    <Node score="-0.24719761270252177">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="1.2361983519071482">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.7036624372080288">
+                <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                <Node score="-0.1503494305220214">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="0.04935093929596814">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="68.54894694826106"/>
+            </Node>
+        </Node>
+        <Node score="0.12581280849830262">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.20890304630930578">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.17494648986754344">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.1747474782930916">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="-0.046958449081010656">
+            <SimplePredicate field="age" operator="lessOrEqual" value="24.09727183437848"/>
+            <Node score="0.7719405543448513">
+                <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+            </Node>
+        </Node>
+        <Node score="-1.0102620963716564">
+            <SimplePredicate field="age" operator="lessOrEqual" value="25.903860271909537"/>
+        </Node>
+    </Node>
+    <Node score="0.21520854428129457">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="0.04216389076909007">
+            <SimplePredicate field="channel" operator="equal" value="mobile"/>
+        </Node>
+    </Node>
+    <Node score="-0.08940833494346923">
+        <SimplePredicate field="age" operator="lessOrEqual" value="69.33713344811139"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="37" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.2288809734345226">
+    <True/>
+    <Node score="-1.0176767970981193">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.08166307084149045">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.0654293578913972">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.2017405713053878">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="242.46188546412614"/>
+                </Node>
+            </Node>
+            <Node score="0.49401649239701334">
+                <SimplePredicate field="age" operator="lessOrEqual" value="24.09727183437848"/>
+            </Node>
+        </Node>
+        <Node score="-0.14076722446923226">
+            <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+            <Node score="0.04060405400362526">
+                <SimplePredicate field="days" operator="lessOrEqual" value="45.23957569436428"/>
+            </Node>
+        </Node>
+        <Node score="-0.2630215855275217">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        </Node>
+    </Node>
+    <Node score="0.5577665021521653">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        <Node score="-2.904866398638858">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            <Node score="-0.7390533693284266">
+                <SimplePredicate field="age" operator="lessOrEqual" value="54.23709907297235"/>
+            </Node>
+        </Node>
+        <Node score="-0.8299209773302094">
+            <SimplePredicate field="channel" operator="equal" value="pos"/>
+        </Node>
+    </Node>
+    <Node score="0.14968902507903245">
+        <SimplePredicate field="channel" operator="equal" value="mobile"/>
+        <Node score="-0.2711709269385057">
+            <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        </Node>
+    </Node>
+    <Node score="-0.0074499125317300015">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="38" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+</MiningSchema>
+<Node score="0.06344104603494238">
+    <True/>
+    <Node score="-0.23886374312996994">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.08764155602632533">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.36065874967694106">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="4.811699920224136"/>
+                <Node score="-0.21703968781446056">
+                    <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                </Node>
+            </Node>
+            <Node score="0.19422579595824316">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            </Node>
+        </Node>
+        <Node score="0.1257964522276007">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.20246498506531999">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.16923784468132205">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.19276857108453138">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="0.16051243835541987">
+            <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+            <Node score="0.9313513318268659">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="96.84579952618907"/>
+            </Node>
+        </Node>
+        <Node score="-0.17176970242508588">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="92.70452462862887"/>
+        </Node>
+    </Node>
+    <Node score="0.204956962017">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="0.0398678815463623">
+            <SimplePredicate field="channel" operator="equal" value="mobile"/>
+        </Node>
+    </Node>
+    <Node score="-0.13887185279382644">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="108.43512148463051"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="39" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.2044018025935551">
+    <True/>
+    <Node score="-0.23355632275119498">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="0.35708150228189367">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.6777849293856922">
+                <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                <Node score="-0.13618162382994126">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="-0.15500606815805562">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="40.576244396343135"/>
+            </Node>
+        </Node>
+        <Node score="0.12051879497211263">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.19861029950127423">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.16608259492403463">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.1557800524340258">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.15829981517700356">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+            <Node score="-1.3854038283618806">
+                <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+            </Node>
+        </Node>
+        <Node score="0.5406078669580188">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+        </Node>
+    </Node>
+    <Node score="-0.09919905650845193">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="0.1366453184059951">
+            <SimplePredicate field="age" operator="lessOrEqual" value="33.6526357986066"/>
+        </Node>
+    </Node>
+    <Node score="-0.0626603326188905">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="40" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.33675018621209746">
+    <True/>
+    <Node score="-0.20953505017570104">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="0.142659225566136">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.034206116663448985">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+                <Node score="-0.5074249410894994">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+                </Node>
+            </Node>
+            <Node score="-0.16290315337362338">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            </Node>
+        </Node>
+        <Node score="-0.18757567160274058">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.17890704019351444">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            </Node>
+        </Node>
+        <Node score="-0.05259647263963795">
+            <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+        </Node>
+    </Node>
+    <Node score="0.042761559466363126">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.20066974347312103">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.0535683974949482">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            </Node>
+        </Node>
+        <Node score="-0.15333882889682096">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="0.20938620563806729">
+        <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+        <Node score="-0.017013712495598132">
+            <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        </Node>
+    </Node>
+    <Node score="-0.796040389683886">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="41" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.12708724073346445">
+    <True/>
+    <Node score="-0.22643629417590316">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="0.5665932592646945">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.08102317979512066">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.7917768690231354">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+                </Node>
+            </Node>
+            <Node score="-0.25963589713187013">
+                <SimplePredicate field="age" operator="lessOrEqual" value="48.675098670541054"/>
+            </Node>
+        </Node>
+        <Node score="0.11981824836693382">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.19176235560064434">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.16012416322597028">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.21329907757128336">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="-0.2246420337561267">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            <Node score="0.1370051869132413">
+                <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+            </Node>
+        </Node>
+        <Node score="0.14230695924496067">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+        </Node>
+    </Node>
+    <Node score="-0.09151242982790017">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        <Node score="-0.8969946090386337">
+            <SimplePredicate field="days" operator="lessOrEqual" value="23.738633538202006"/>
+        </Node>
+    </Node>
+    <Node score="-0.07532137642118593">
+        <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="42" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.03274748658823515">
+    <True/>
+    <Node score="-0.9441268524128146">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.07270946179795615">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.02731081687228447">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.2997599826335149">
+                    <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                </Node>
+            </Node>
+            <Node score="0.4703245752421002">
+                <SimplePredicate field="age" operator="lessOrEqual" value="24.09727183437848"/>
+            </Node>
+        </Node>
+        <Node score="-0.12876532979022182">
+            <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+            <Node score="0.049197044134727294">
+                <SimplePredicate field="days" operator="lessOrEqual" value="45.23957569436428"/>
+            </Node>
+        </Node>
+        <Node score="-0.24512555742005487">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        </Node>
+    </Node>
+    <Node score="0.2173196071333333">
+        <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+        <Node score="0.3008281273969033">
+            <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+            <Node score="0.993211238099782">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="117.43567665678347"/>
+            </Node>
+        </Node>
+        <Node score="-0.5915203071497671">
+            <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+        </Node>
+    </Node>
+    <Node score="-0.1964132918097494">
+        <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+        <Node score="0.3195652856998214">
+            <SimplePredicate field="days" operator="lessOrEqual" value="67.13803633030341"/>
+        </Node>
+    </Node>
+    <Node score="0.29989719353016336">
+        <SimplePredicate field="age" operator="lessOrEqual" value="57.896769551311955"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="43" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+</MiningSchema>
+<Node score="0.1265754707608875">
+    <True/>
+    <Node score="-0.21944356329526166">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.07566227561079536">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.345105533392762">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="4.811699920224136"/>
+                <Node score="-0.1980567733705847">
+                    <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+                </Node>
+            </Node>
+            <Node score="0.17903767288358066">
+                <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            </Node>
+        </Node>
+        <Node score="0.11954598212177754">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.18634396630292244">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.1552842383178776">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="0.14342797189564166">
+        <SimplePredicate field="channel" operator="equal" value="online"/>
+        <Node score="0.14024925513142833">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+            <Node score="-1.2815205474382734">
+                <SimplePredicate field="age" operator="lessOrEqual" value="31.38440208742511"/>
+            </Node>
+        </Node>
+        <Node score="0.5011712222347364">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+        </Node>
+    </Node>
+    <Node score="-0.06662696045378198">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.119478056896792">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.2598613435573957">
+        <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="44" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.11035086917927481">
+    <True/>
+    <Node score="-0.21493767227055088">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="0.3360828482976265">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.6601680420744126">
+                <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+                <Node score="-0.12519162172890114">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+                </Node>
+            </Node>
+            <Node score="-0.1422180632812356">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="40.576244396343135"/>
+            </Node>
+        </Node>
+        <Node score="0.11447453743816442">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.18306254716820147">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="-0.15258199380556484">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+        </Node>
+    </Node>
+    <Node score="-0.08787679056922798">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        <Node score="0.09472249497160756">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.34040794027993954">
+                <SimplePredicate field="days" operator="lessOrEqual" value="34.03145232239655"/>
+            </Node>
+        </Node>
+        <Node score="0.12877008647326113">
+            <SimplePredicate field="age" operator="lessOrEqual" value="33.6526357986066"/>
+        </Node>
+    </Node>
+    <Node score="0.003770702511895475">
+        <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        <Node score="-1.3626374342188095">
+            <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+        </Node>
+    </Node>
+    <Node score="0.2816911279094225">
+        <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="45" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.31422142243401474">
+    <True/>
+    <Node score="-0.18718448043474326">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="-0.07068613478653085">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="0.06464078297880486">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="80.19743843470584"/>
+                <Node score="-0.20139320455152238">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+                </Node>
+            </Node>
+            <Node score="1.8277927288499152">
+                <SimplePredicate field="days" operator="lessOrEqual" value="89.23409653729186"/>
+            </Node>
+        </Node>
+        <Node score="-0.12392476949445538">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+            <Node score="0.137755770472774">
+                <SimplePredicate field="channel" operator="equal" value="online"/>
+            </Node>
+        </Node>
+        <Node score="-0.025186307223397025">
+            <SimplePredicate field="days" operator="lessOrEqual" value="34.03145232239655"/>
+        </Node>
+    </Node>
+    <Node score="-0.05215290110496545">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="-0.008379027986028671">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.16525732755552563">
+                <SimplePredicate field="days" operator="lessOrEqual" value="285.06701751932474"/>
+            </Node>
+        </Node>
+        <Node score="0.13192009446963812">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.15597084113559473">
+        <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+        <Node score="0.2520436062169286">
+            <SimplePredicate field="channel" operator="equal" value="pos"/>
+        </Node>
+    </Node>
+    <Node score="-0.7694464852446127">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="46" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.25735779358216887">
+    <True/>
+    <Node score="-0.19299068187595048">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="0.10749846197201512">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.6284604833012427">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+                <Node score="-0.0844957315861022">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+                </Node>
+            </Node>
+            <Node score="-0.21215961140563933">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="21.70557738350959"/>
+            </Node>
+        </Node>
+        <Node score="-0.17205498664549904">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.16366620230451648">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            </Node>
+        </Node>
+        <Node score="-0.042383406269859716">
+            <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+        </Node>
+    </Node>
+    <Node score="-0.04819095869140148">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.18249923441413243">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.03820871502770982">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            </Node>
+        </Node>
+        <Node score="0.12349469886314504">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="0.18495481665839822">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="174.1957656618447"/>
+        <Node score="0.016069723720533568">
+            <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        </Node>
+    </Node>
+    <Node score="0.1611633196599542">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="47" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.20235666824239612">
+    <True/>
+    <Node score="-0.15864357442100305">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="72.40907620327857"/>
+        <Node score="-0.2995508173479035">
+            <SimplePredicate field="channel" operator="equal" value="pos"/>
+            <Node score="0.05573984268145438">
+                <SimplePredicate field="days" operator="lessOrEqual" value="242.46188546412614"/>
+                <Node score="-0.1645733375940479">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="229.33467949680193"/>
+                </Node>
+            </Node>
+            <Node score="-0.17177655590210622">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="56.41351018633144"/>
+            </Node>
+        </Node>
+        <Node score="0.21261620998293945">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+            <Node score="-0.27284069237948155">
+                <SimplePredicate field="days" operator="lessOrEqual" value="126.99130947831438"/>
+            </Node>
+        </Node>
+        <Node score="-0.021731432421764743">
+            <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        </Node>
+    </Node>
+    <Node score="0.07873168393463037">
+        <SimplePredicate field="merchant" operator="equal" value="C-Shop"/>
+        <Node score="3.4660367011339437">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="76.92794344569994"/>
+            <Node score="0.5480280760076328">
+                <SimplePredicate field="days" operator="lessOrEqual" value="341.06623298636543"/>
+            </Node>
+        </Node>
+        <Node score="0.498420085786385">
+            <SimplePredicate field="days" operator="lessOrEqual" value="34.03145232239655"/>
+        </Node>
+    </Node>
+    <Node score="0.13833821322561768">
+        <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        <Node score="-0.46751146923190845">
+            <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+        </Node>
+    </Node>
+    <Node score="-0.07720886586919799">
+        <SimplePredicate field="age" operator="lessOrEqual" value="69.33713344811139"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="48" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.45271210149259344">
+    <True/>
+    <Node score="-0.8899531562594688">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="103.92240312776701"/>
+        <Node score="0.06722337164287825">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.06562158052642968">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.1707563512897498">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="242.46188546412614"/>
+                </Node>
+            </Node>
+            <Node score="0.44365074290228074">
+                <SimplePredicate field="age" operator="lessOrEqual" value="24.09727183437848"/>
+            </Node>
+        </Node>
+        <Node score="-0.11661215224931454">
+            <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+            <Node score="0.052766404389314486">
+                <SimplePredicate field="days" operator="lessOrEqual" value="45.23957569436428"/>
+            </Node>
+        </Node>
+        <Node score="-0.22864569630235135">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        </Node>
+    </Node>
+    <Node score="0.18665658282931957">
+        <SimplePredicate field="age" operator="lessOrEqual" value="71.47010053059952"/>
+        <Node score="0.7777166153219336">
+            <SimplePredicate field="age" operator="lessOrEqual" value="57.896769551311955"/>
+            <Node score="0.0993857891036633">
+                <SimplePredicate field="age" operator="lessOrEqual" value="56.044348640788414"/>
+            </Node>
+        </Node>
+        <Node score="-0.33417329922929634">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="129.7149885077886"/>
+        </Node>
+    </Node>
+    <Node score="0.3272878352723339">
+        <SimplePredicate field="days" operator="lessOrEqual" value="329.6935167108889"/>
+        <Node score="-0.40625695739234224">
+            <SimplePredicate field="days" operator="lessOrEqual" value="23.738633538202006"/>
+        </Node>
+    </Node>
+    <Node score="-1.8798544098422603">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="117.43567665678347"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="49" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.1719110639748302">
+    <True/>
+    <Node score="-0.20770126452433457">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="0.24140462873828622">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.06453946192589895">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="60.148333598788945"/>
+                <Node score="-0.7256418670318963">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="20.075439071566876"/>
+                </Node>
+            </Node>
+            <Node score="-0.2637626916818237">
+                <SimplePredicate field="days" operator="lessOrEqual" value="78.13656074246703"/>
+            </Node>
+        </Node>
+        <Node score="-0.16600163555713077">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.15710146943847283">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            </Node>
+        </Node>
+        <Node score="-0.04658120996648052">
+            <SimplePredicate field="age" operator="lessOrEqual" value="65.3470126059122"/>
+        </Node>
+    </Node>
+    <Node score="-0.02673766938931761">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="0.17695324055984973">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.03423128041963525">
+                <SimplePredicate field="amount" operator="lessOrEqual" value="100.12815436683067"/>
+            </Node>
+        </Node>
+        <Node score="0.22666594748669036">
+            <SimplePredicate field="age" operator="lessOrEqual" value="24.09727183437848"/>
+        </Node>
+    </Node>
+    <Node score="0.24617158414969642">
+        <SimplePredicate field="age" operator="lessOrEqual" value="41.22102125257132"/>
+        <Node score="0.16021726283341062">
+            <SimplePredicate field="merchant" operator="equal" value="D-Market"/>
+        </Node>
+    </Node>
+    <Node score="-0.30886016794447">
+        <SimplePredicate field="age" operator="lessOrEqual" value="45.335622569413054"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="50" weight="0.05">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+<MiningSchema>
+    <MiningField name="merchant"/>
+    <MiningField name="channel"/>
+    <MiningField name="amount"/>
+    <MiningField name="age"/>
+    <MiningField name="days"/>
+</MiningSchema>
+<Node score="0.28262127768104167">
+    <True/>
+    <Node score="-0.18277883901066347">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="84.24046650441309"/>
+        <Node score="0.8639970000810406">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="-0.5893665200217003">
+                <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+                <Node score="-0.07292808909393232">
+                    <SimplePredicate field="days" operator="lessOrEqual" value="296.6263671160099"/>
+                </Node>
+            </Node>
+            <Node score="0.014348588178648468">
+                <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+            </Node>
+        </Node>
+        <Node score="-0.16338089849853424">
+            <SimplePredicate field="amount" operator="lessOrEqual" value="46.03980998631207"/>
+            <Node score="-0.15474788733569075">
+                <SimplePredicate field="merchant" operator="equal" value="B-Store"/>
+            </Node>
+        </Node>
+        <Node score="-0.035726966231481194">
+            <SimplePredicate field="days" operator="lessOrEqual" value="252.48456245003217"/>
+        </Node>
+    </Node>
+    <Node score="0.03446430951076124">
+        <SimplePredicate field="amount" operator="lessOrEqual" value="145.92301656594572"/>
+        <Node score="-0.016643570161219125">
+            <SimplePredicate field="channel" operator="equal" value="online"/>
+            <Node score="0.15492485111121818">
+                <SimplePredicate field="days" operator="lessOrEqual" value="285.06701751932474"/>
+            </Node>
+        </Node>
+        <Node score="-0.126899527477516">
+            <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+        </Node>
+    </Node>
+    <Node score="0.17988683937904526">
+        <SimplePredicate field="age" operator="lessOrEqual" value="77.63157410799788"/>
+        <Node score="-0.028436581455193743">
+            <SimplePredicate field="days" operator="lessOrEqual" value="12.716215486757225"/>
+        </Node>
+    </Node>
+    <Node score="-0.7669316297461056">
+        <SimplePredicate field="merchant" operator="equal" value="A-Mart"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                    </Segmentation>
+                </MiningModel>
+            </Segment>
+            <Segment id="2">
+                <True/>
+                <RegressionModel functionName="classification" normalizationMethod="logit">
+                    <MiningSchema>
+                        <MiningField name="label" usageType="target"/>
+                        <MiningField name="gbtValue"/>
+                    </MiningSchema>
+                    <Output>
+                        <OutputField name="probability(0)" optype="continuous" dataType="double" feature="probability" value="0"/>
+                        <OutputField name="probability(1)" optype="continuous" dataType="double" feature="probability" value="1"/>
+                    </Output>
+                    <RegressionTable intercept="0.0" targetCategory="1">
+                        <NumericPredictor name="gbtValue" coefficient="2.0"/>
+                    </RegressionTable>
+                    <RegressionTable intercept="0.0" targetCategory="0"/>
+                </RegressionModel>
+            </Segment>
+        </Segmentation>
+    </MiningModel>
+</PMML>

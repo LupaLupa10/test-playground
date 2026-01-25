@@ -1,0 +1,17 @@
+# Python virtual environments
+**/venv/
+**/.venv/
+**/env/
+**/.env/
+
+.ipynb_checkpoints/
+.pytest_cache/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Temporary files 
+spark_xgb_boost.py
+test.py
+abc.py
+
