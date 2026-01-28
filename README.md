@@ -19,7 +19,6 @@ python dev_spark_mllib.py on the terminal
 ```
 
 
-
 <!-- jpmml-h20: convert H20.ai models to PMML
 
 JPMML-SparkML: core library and convert Apache Spark ML pipelines to PMML
