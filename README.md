@@ -19,9 +19,10 @@ python dev_spark_mllib.py on the terminal
 ```
 
 
+
 <!-- jpmml-h20: convert H20.ai models to PMML
 
-JPMML-SparkML: core library and convert Apache Spark ML pipelines to PMML
+JPMML-SparkML: core library and convert Apache Spark ML pipelines to PMML. If want lower boiler plate and use Scala/Java. 
 
 PySpark2PMML: wrapper for JPMML-SparkML
 

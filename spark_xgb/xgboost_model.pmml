@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.4">
+    <Header>
+        <Application name="JPMML-SparkML library" version="3.1.9"/>
+        <Timestamp>2026-01-29T05:28:08Z</Timestamp>
+    </Header>
+    <DataDictionary>
+        <DataField name="f1" optype="continuous" dataType="double"/>
+        <DataField name="label" optype="categorical" dataType="integer">
+            <Value value="0"/>
+            <Value value="1"/>
+        </DataField>
+    </DataDictionary>
+    <MiningModel functionName="classification" algorithmName="XGBoost (GBTree)" x-mathContext="float">
+        <MiningSchema>
+            <MiningField name="label" usageType="target"/>
+            <MiningField name="f1" missingValueReplacement="3.128571428571429" missingValueTreatment="asMean"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="pmml(prediction)" optype="categorical" dataType="integer" isFinalResult="false"/>
+            <OutputField name="prediction" optype="continuous" dataType="double" feature="transformedValue">
+                <MapValues outputColumn="data:output" dataType="double">
+                    <FieldColumnPair field="pmml(prediction)" column="data:input"/>
+                    <InlineTable>
+                        <row>
+                            <data:input>0</data:input>
+                            <data:output>0</data:output>
+                        </row>
+                        <row>
+                            <data:input>1</data:input>
+                            <data:output>1</data:output>
+                        </row>
+                    </InlineTable>
+                </MapValues>
+            </OutputField>
+        </Output>
+        <Segmentation multipleModelMethod="modelChain" missingPredictionTreatment="returnMissing">
+            <Segment id="1">
+                <True/>
+                <MiningModel functionName="regression" x-mathContext="float">
+                    <MiningSchema>
+                        <MiningField name="f1"/>
+                    </MiningSchema>
+                    <Output>
+                        <OutputField name="xgbValue" optype="continuous" dataType="float" isFinalResult="false"/>
+                    </Output>
+                    <Segmentation multipleModelMethod="sum" missingPredictionTreatment="returnMissing">
+                        <Segment id="1">
+                            <True/>
+                            <TreeModel functionName="regression" missingValueStrategy="defaultChild" splitCharacteristic="binarySplit" x-mathContext="float">
+<MiningSchema>
+    <MiningField name="f1"/>
+</MiningSchema>
+<LocalTransformations>
+    <DerivedField name="float(f1)" optype="continuous" dataType="float">
+        <FieldRef field="f1"/>
+    </DerivedField>
+</LocalTransformations>
+<Node id="0" defaultChild="2">
+    <True/>
+    <Node id="1" score="-0.3">
+        <SimplePredicate field="float(f1)" operator="lessThan" value="3.1285715"/>
+    </Node>
+    <Node id="2" score="0.3">
+        <SimplePredicate field="float(f1)" operator="greaterOrEqual" value="3.1285715"/>
+    </Node>
+</Node>
+                            </TreeModel>
+                        </Segment>
+                    </Segmentation>
+                </MiningModel>
+            </Segment>
+            <Segment id="2">
+                <True/>
+                <RegressionModel functionName="classification" normalizationMethod="logit" x-mathContext="float">
+                    <MiningSchema>
+                        <MiningField name="label" usageType="target"/>
+                        <MiningField name="xgbValue"/>
+                    </MiningSchema>
+                    <Output>
+                        <OutputField name="probability(0)" optype="continuous" dataType="float" feature="probability" value="0"/>
+                        <OutputField name="probability(1)" optype="continuous" dataType="float" feature="probability" value="1"/>
+                    </Output>
+                    <RegressionTable intercept="0.0" targetCategory="1">
+                        <NumericPredictor name="xgbValue" coefficient="1.0"/>
+                    </RegressionTable>
+                    <RegressionTable intercept="0.0" targetCategory="0"/>
+                </RegressionModel>
+            </Segment>
+        </Segmentation>
+    </MiningModel>
+</PMML>
