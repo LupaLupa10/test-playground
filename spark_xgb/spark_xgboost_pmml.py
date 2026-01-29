@@ -15,6 +15,19 @@ Objective: To test pipeline (data processing + spark xgboost) and convert to PMM
 
 !java --version
 
+# Install OpenJDK 11
+!apt-get install -y openjdk-11-jdk-headless -qq > /dev/null
+
+# Configure Java 11 as the default version
+!update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+
+# Set JAVA_HOME environment variable for PySpark
+import os
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-11-openjdk-amd64"
+
+# Verify the Java version
+!java --version
+
 !python --version
 
 !pip install pyspark==3.5.0
@@ -89,6 +102,12 @@ class XGBoostClassifier(JavaEstimator, JavaMLWritable, JavaMLReadable):
     def _create_model(self, java_model):
         # Return the Python wrapper for the created Java model
         return XGBoostClassificationModel(java_model)
+
+j = spark._jvm.ml.dmlc.xgboost4j.scala.spark.XGBoostClassifier()
+params = j.params()
+
+for p in params:
+    print(p.name(), "->", p.doc())
 
 """### Create Samples Dataset"""
 
@@ -174,6 +193,8 @@ print("Inference Results:")
 predictions.select("f1", "f2", "f3", "prediction").show()
 
 """### Load and Test PMML Model"""
+
+!pip install pypmml_spark pypmml
 
 import os
 import pandas as pd
